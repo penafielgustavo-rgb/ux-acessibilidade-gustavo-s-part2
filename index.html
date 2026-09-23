@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de Segurança Digital para a Terceira Idade</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Canvas para o Fundo 3D -->
+  <canvas id="bg-3d"></canvas>
+
+  <header class="cabecalho">
+    <h1>Guia de Segurança Digital</h1>
+    <p>Dicas simples para navegar na internet com tranquilidade</p>
+  </header>
+
+  <main class="conteudo">
+    
+    <section class="cartao-dica">
+      <div class="icone">📱</div>
+      <h2>1. Golpe da Mensagem de Família</h2>
+      <p><strong>Como funciona:</strong> Alguém envia uma mensagem dizendo ser seu filho ou neto, usando um número novo, e pede dinheiro urgente.</p>
+      <div class="alerta">
+        <strong>O que fazer:</strong> Ligue imediatamente para o número antigo do seu familiar antes de enviar qualquer dinheiro.
+      </div>
+    </section>
+
+    <section class="cartao-dica">
+      <div class="icone">🏦</div>
+      <h2>2. Falso Telefonema do Banco</h2>
+      <p><strong>Como funciona:</strong> Uma pessoa liga dizendo que sua conta foi invadida e pede suas senhas ou para você fazer uma transferência de segurança.</p>
+      <div class="alerta">
+        <strong>O que fazer:</strong> Desligue a ligação. Os bancos nunca pedem senhas nem transferências por telefone.
+      </div>
+    </section>
+
+    <section class="cartao-dica">
+      <div class="icone">🎁</div>
+      <h2>3. Links Falsos com Promoções</h2>
+      <p><strong>Como funciona:</strong> Mensagens no WhatsApp prometendo presentes, prêmios ou descontos em troca de clicar em um link.</p>
+      <div class="alerta">
+        <strong>O que fazer:</strong> Não clique no link e apague a mensagem. Não compartilhe com seus amigos.
+      </div>
+    </section>
+
+    <section class="regras-ouro">
+      <h2>Regras de Ouro</h2>
+      <ul>
+        <li>Nunca fale suas senhas para ninguém.</li>
+        <li>Não tenha pressa: golpistas sempre pedem coisas com urgência.</li>
+        <li>Na dúvida, peça ajuda a um familiar ou amigo de confiança.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="rodape">
+    <p>Compartilhe este guia com seus amigos e familiares.</p>
+  </footer>
+
+  <!-- Biblioteca Three.js para renderização 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <script>
+    // Configuração do Fundo Tridimensional com Three.js
+    const canvas = document.getElementById('bg-3d');
+    const scene = new THREE.Scene();
+    
+    // Adiciona uma névoa de profundidade
+    scene.fog = new THREE.FogExp2(0x0a192f, 0.015);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Iluminação
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0x00d2ff, 2, 50);
+    pointLight1.position.set(10, 15, 10);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0x004b87, 2, 50);
+    pointLight2.position.set(-10, -15, -10);
+    scene.add(pointLight2);
+
+    // Criação dos Objetos Tridimensionais Flutuantes
+    const shapes = [];
+    const geometries = [
+      new THREE.IcosahedronGeometry(1.2, 0),
+      new THREE.BoxGeometry(1.5, 1.5, 1.5),
+      new THREE.TetrahedronGeometry(1.4, 0),
+      new THREE.TorusGeometry(1, 0.4, 16, 100)
+    ];
+
+    const materials = [
+      new THREE.MeshStandardMaterial({ color: 0x004b87, roughness: 0.3, metalness: 0.7, wireframe: false }),
+      new THREE.MeshStandardMaterial({ color: 0x00a8ff, roughness: 0.2, metalness: 0.5 }),
+      new THREE.MeshStandardMaterial({ color: 0x385723, roughness: 0.4, metalness: 0.3 }),
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.1, metalness: 0.9, wireframe: true })
+    ];
+
+    const numObjects = 45;
+    for (let i = 0; i < numObjects; i++) {
+      const geom = geometries[Math.floor(Math.random() * geometries.length)];
+      const mat = materials[Math.floor(Math.random() * materials.length)];
+      const mesh = new THREE.Mesh(geom, mat);
+
+      // Posicionamento aleatório no espaço 3D
+      mesh.position.x = (Math.random() - 0.5) * 45;
+      mesh.position.y = (Math.random() - 0.5) * 45;
+      mesh.position.z = (Math.random() - 0.5) * 30 - 10;
+
+      // Rotacional inicial aleatória
+      mesh.rotation.x = Math.random() * Math.PI;
+      mesh.rotation.y = Math.random() * Math.PI;
+
+      // Escala aleatória
+      const scale = Math.random() * 0.8 + 0.5;
+      mesh.scale.set(scale, scale, scale);
+
+      // Dados de animação individual
+      mesh.userData = {
+        rotSpeedX: (Math.random() - 0.5) * 0.015,
+        rotSpeedY: (Math.random() - 0.5) * 0.015,
+        floatSpeedY: Math.random() * 0.008 + 0.003,
+        floatAmplitude: Math.random() * 2 + 1,
+        initialY: mesh.position.y
+      };
+
+      scene.add(mesh);
+      shapes.push(mesh);
+    }
+
+    camera.position.z = 20;
+
+    // Efeito suave de interação com o movimento do mouse
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
+      mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
+    });
+
+    // Loop de Animação
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+
+      // Suavização do movimento da câmera
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (mouseY - targetY) * 0.05;
+      
+      camera.position.x = targetX * 10;
+      camera.position.y = -targetY * 10;
+      camera.lookAt(scene.position);
+
+      // Animação de cada objeto no espaço
+      shapes.forEach((shape) => {
+        shape.rotation.x += shape.userData.rotSpeedX;
+        shape.rotation.y += shape.userData.rotSpeedY;
+
+        // Movimento de flutuação senoidal suave
+        shape.position.y = shape.userData.initialY + Math.sin(elapsedTime * shape.userData.floatSpeedY * 5) * shape.userData.floatAmplitude;
+      });
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Ajuste Responsivo da Janela
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+</body>
+</html>
